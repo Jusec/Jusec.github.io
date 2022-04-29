@@ -1,6 +1,6 @@
 # Site settings
-title: Eureka Blog
-SEOTitle: Eureka Blog
+title: Eureka
+SEOTitle: Eureka
 header-img: img/post-bg-desk.jpg
 email: Jusesc@163.com
 description: "Every failure is leading towards success."
@@ -13,18 +13,18 @@ github_repo: "https://github.com/Jusec/Jusec.github.io.git" # you code repositor
 sidebar: true                           # whether or not using Sidebar. 是否开启侧边栏.
 sidebar-about-description: "Goals determine what you going to be!"
 # "图片"
-sidebar-avatar: /img/about-BY-gentle.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/Mo.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
 # SNS settings
 RSS: false
-# weibo_username:     Eureka
-zhihu_username:     Eureka
-github_username:    Eureka
-facebook_username:  Eureka
-jianshu_username:   Eureka
-#twitter_username:   Eureka
+weibo_username:     ''
+zhihu_username:     ''
+github_username:    Jusec
+facebook_username:  ''
+jianshu_username:   ''
+twitter_username:   ''
 
 
 
