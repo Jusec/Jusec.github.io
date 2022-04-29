@@ -1,8 +1,8 @@
 ---
 layout:     post
-title:      优化算法
-subtitle:   深度学习中的优化算法
-date:       2022-04-29
+title:      优化算法、Batch Normalization
+subtitle:   深度学习
+date:       2022-04-28
 author:     Mo
 header-img: img/post-bg-re-vs-ng2.jpg
 catalog: true
@@ -96,7 +96,6 @@ for i in range(nb_epochs):
 - [ ] **小批量梯度下降算法（mini-batch GD）**
 
   小批量梯度下降法是是对于m个样本，我们采用x个样子来迭代，1<x<m。一般可以取x=10，当然根据样本的数据，可以调整这个x的值。
-  
   $$
   \theta=\theta-\eta \cdot \nabla_{\theta} J\left(\theta ; x^{(i: i+n)} ; y^{(i: i+n)}\right)
   $$
@@ -172,29 +171,21 @@ $$
 这个算法就可以对低频的参数做较大的更新，对高频的做较小的更新，也因此，对于稀疏的数据它的表现很好，很好地提高了 SGD 的鲁棒性，例如识别 Youtube 视频里面的猫，训练 GloVe word embeddings，因为它们都是需要在低频的特征上有更大的更新。
 
 梯度更新规则:
-
 $$
 \theta_{t+1, i}=\theta_{t, i}-\frac{\eta}{\sqrt{G_{t, i i}+\epsilon}} \cdot g_{t, i}
 $$
-
 其中g为：t时刻参数θ_i的梯度
-
 $$
 g_{t, i}=\nabla_{\theta} J\left(\theta_{i}\right)
 $$
-
 如果是普通的 SGD， 那么 θ_i 在每一时刻的梯度更新公式为：
-
 $$
 \theta_{t+1, i}=\theta_{t, i}-\eta \cdot g_{t, i}
 $$
-
 但这里的learning rate η也随t和i而变：
-
 $$
 \theta_{t+1, i}=\theta_{t, i}-\frac{\eta}{\sqrt{G_{t, i i}+\epsilon}} \cdot g_{t, i}
 $$
-
 其中 Gt 是个对角矩阵， (i,i) 元素就是 t 时刻参数 θi 的梯度平方和。
 
 > **优点**：减少了学习率的手动调节。超参数设定值：一般η选取0.01。
@@ -206,32 +197,24 @@ $$
 - [ ] **Adadelta**
 
 这个算法是对 Adagrad 的改进，和Adagrad相比，就是分母的 G 换成了过去的梯度平方的衰减平均值，指数衰减平均值
-
 $$
 \Delta \theta_{t}=-\frac{\eta}{\sqrt{E\left[g^{2}\right]_{t}+\epsilon}} g_{t}
 $$
-
 这个分母相当于梯度的均方根 root mean squared (RMS)，在数据统计分析中，将所有值平方求和，求其均值，再开平方，就得到均方根值 ，所以可以用 RMS 简写：
-
 $$
 \Delta \theta_{t}=-\frac{\eta}{R M S[g]_{t}} g_{t}
 $$
-
 其中 E 的计算公式如下，t 时刻的依赖于前一时刻的平均和当前的梯度：
-
 $$
 E\left[g^{2}\right]_{t}=\gamma E\left[g^{2}\right]_{t-1}+(1-\gamma) g_{t}^{2}
 $$
-
 梯度更新规则:此外，还将学习率η换成了RMS[Δθ]，这样的话，我们甚至都不需要提前设定学习率了：
-
 $$
 \begin{aligned}
 \Delta \theta_{t} &=-\frac{R M S[\Delta \theta]_{t-1}}{R M S[g]_{t}} g_{t} \\
 \theta_{t+1} &=\theta_{t}+\Delta \theta_{t}
 \end{aligned}
 $$
-
 超参数设定值: γ 一般设定为 0.9
 
 > **优点：**（1）不用依赖于全局学习率了
@@ -246,29 +229,23 @@ $$
 Adam 算法和传统的随机梯度下降不同。随机梯度下降保持单一的学习率（即 alpha）更新所有的权重，学习率在训练过程中并不会改变。而 Adam 通过计算梯度的一阶矩估计和二阶矩估计而为不同的参数设计独立的自适应性学习率。这个算法是另一种计算每个参数的自适应学习率的方法，相当于 RMSprop + Momentum。
 
 除了像 Adadelta 和 RMSprop 一样存储了过去梯度的平方 vt 的指数衰减平均值 ，也像 momentum 一样保持了过去梯度 mt 的指数衰减平均值：
-
 $$
 \begin{aligned}
 &m_{t}=\beta_{1} m_{t-1}+\left(1-\beta_{1}\right) g_{t} \\
 &v_{t}=\beta_{2} v_{t-1}+\left(1-\beta_{2}\right) g_{t}^{2}
 \end{aligned}
 $$
-
 如果mt和vt被初始化为0向量，那它们就会向0偏置，所以做了偏差校正，通过计算偏差校正后的mt和vt来抵消这些偏差：
-
 $$
 \begin{aligned}
 &\hat{m}_{t}=\frac{m_{t}}{1-\beta_{1}^{t}} \\
 &\hat{v}_{t}=\frac{v_{t}}{1-\beta_{2}^{t}}
 \end{aligned}
 $$
-
 梯度更新规则:
-
 $$
 \theta_{t+1}=\theta_{t}-\frac{\eta}{\sqrt{\hat{v}_{t}}+\epsilon} \hat{m}_{t}
 $$
-
 超参数设定值:建议 β1 ＝ 0.9，β2 ＝ 0.999，ϵ ＝ 10e−8。
 
 实践表明，Adam 比其他适应性学习方法效果要好。
@@ -297,3 +274,157 @@ $$
 
 ![70](https://s2.loli.net/2022/04/29/xMIV13bcv9k86tn.png)
 
+
+
+
+
+# 2.Batch Normalization
+
+## **2.1.批标准化(Batch Normalization)**
+
+​	可以理解为是一种数据预处理技术，使得每层网络的输入都服从（0，1）0均值，1方差分布，如果不进行BN，那么每次输入的数据分布不一致，网络训练精度自然也受影响。前向公式：
+
+![图片](https://s2.loli.net/2022/04/29/HLVJZYuvpmIrdtx.jpg)
+
+**前向传播代码**:
+
+```python
+def batchnorm_forward(x, gamma, beta, eps):
+
+  N, D = x.shape
+  #为了后向传播求导方便，这里都是分步进行的
+  #step1: 计算均值
+  mu = 1./N * np.sum(x, axis = 0)
+
+  #step2: 减均值
+  xmu = x - mu
+
+  #step3: 计算方差
+  sq = xmu ** 2
+  var = 1./N * np.sum(sq, axis = 0)
+
+  #step4: 计算x^的分母项
+  sqrtvar = np.sqrt(var + eps)
+  ivar = 1./sqrtvar
+
+  #step5: normalization->x^
+  xhat = xmu * ivar
+
+  #step6: scale and shift
+  gammax = gamma * xhat
+  out = gammax + beta
+
+  #存储中间变量
+  cache =  (xhat,gamma,xmu,ivar,sqrtvar,var,eps)
+
+  return out, cache
+```
+
+**后向传播代码**:
+
+```python
+def batchnorm_backward(dout, cache):
+
+  #解压中间变量
+  xhat,gamma,xmu,ivar,sqrtvar,var,eps = cache
+
+  N,D = dout.shape
+
+  #step6
+  dbeta = np.sum(dout, axis=0)
+  dgammax = dout
+  dgamma = np.sum(dgammax*xhat, axis=0)
+  dxhat = dgammax * gamma
+
+  #step5
+  divar = np.sum(dxhat*xmu, axis=0)
+  dxmu1 = dxhat * ivar #注意这是xmu的一个支路
+
+  #step4
+  dsqrtvar = -1. /(sqrtvar**2) * divar
+  dvar = 0.5 * 1. /np.sqrt(var+eps) * dsqrtvar
+
+  #step3
+  dsq = 1. /N * np.ones((N,D)) * dvar
+  dxmu2 = 2 * xmu * dsq #注意这是xmu的第二个支路
+
+  #step2
+  dx1 = (dxmu1 + dxmu2) 注意这是x的一个支路
+
+  #step1
+  dmu = -1 * np.sum(dxmu1+dxmu2, axis=0)
+  dx2 = 1. /N * np.ones((N,D)) * dmu 注意这是x的第二个支路
+
+  #step0 done!
+  dx = dx1 + dx2
+
+  return dx, dgamma, dbeta
+```
+
+
+
+Batch Norm即批规范化，目的是为了解决每批数据训练时的不规则分布给训练造成的困难，对批数据进行规范化，还可以在梯度反传时，解决梯度消失的问题。
+
+
+
+Batchnorm也是一种正则的方式，可以代替其他正则方式如dropout，但通过这样的正则化，也消融了数据之间的许多差异信息。
+
+
+
+## **2.2 BatchNorm的几个参数，可学习的参数有哪些？**
+
+​	第四步加了两个参数γ和β，分别叫做缩放参数和平移参数，通过选择不同的γ和β可以让隐藏单元有不同的分布。这里面的γ和β可以从你的模型中学习，可以用梯度下降，Adam等算法进行更新。
+
+
+
+## **2.3. Batch Normalization的作用**
+
+​	神经网络在训练的时候随着网络层数的加深,激活函数的输入值的整体分布逐渐往激活函数的取值区间上下限靠近,从而导致在反向传播时低层的神经网络的梯度消失。而BatchNormalization的作用是==通过规范化的手段,将越来越偏的分布拉回到标准化的分布,使得激活函数的输入值落在激活函数对输入比较敏感的区域,从而使梯度变大,加快学习收敛速度,避免梯度消失的问题。==
+
+①不仅仅极大提升了训练速度，收敛过程大大加快；②还能增加分类效果，一种解释是这是类似于Dropout的一种防止过拟合的正则化表达方式，所以不用Dropout也能达到相当的效果；③另外调参过程也简单多了，对于初始化要求没那么高，而且可以使用大的学习率等。
+
+
+
+## **2.4. BN层怎么实现**
+
+> 1.计算样本均值。
+>
+> 2.计算样本方差。
+>
+> 3.样本数据标准化处理。
+>
+> 4.进行平移和缩放处理。引入了γ和β两个参数。来训练γ和β两个参数。引入了这个可学习重构参数γ、β，让我们的网络可以学习恢复出原始网络所要学习的特征分布。
+
+
+
+## **2.5.BN一般用在网络的哪个部分啊？**
+
+​	先卷积再BN
+
+​	Batch normalization 的 batch 是批数据, 把数据分成小批小批进行 stochastic gradient descent. 而且在每批数据进行前向传递 forward propagation 的时候, 对每一层都进行 normalization 的处理
+
+
+
+## **2.6.BN为什么要重构**
+
+恢复出原始的某一层所学到的特征的。因此我们引入了这个可学习重构参数γ、β，让我们的网络可以学习恢复出原始网络所要学习的特征分布。
+
+
+
+## **2.7.BN层反向传播，怎么求导**
+
+![image-20220429205618226](https://s2.loli.net/2022/04/29/RkUlINfsn61cbJP.png)
+
+
+
+
+
+## **2.8. batchnorm训练时和测试时的区别**
+
+训练阶段：首先计算均值和方差（每次训练给一个批量，计算批量的均值方差），然后归一化，然后缩放和平移。
+
+测试阶段：每次只输入一张图片，这怎么计算批量的均值和方差，于是，就有了代码中下面两行，在训练的时候实现计算好mean、 var，测试的时候直接拿来用就可以了，不用计算均值和方差。
+
+## **2.9.先加BN还是激活，有什么区别（先激活）**
+
+目前在实践上，倾向于把BN放在ReLU后面。也有评测表明BN放ReLU后面效果更好。
