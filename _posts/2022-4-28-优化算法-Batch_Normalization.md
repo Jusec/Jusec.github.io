@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      优化算法、Batch Normalization
+title:      1.优化算法、Batch Normalization
 subtitle:   深度学习
 date:       2022-04-28
 author:     Mo
