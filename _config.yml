@@ -11,7 +11,7 @@ github_repo: "https://github.com/Jusec/Jusec.github.io.git" # you code repositor
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar. 是否开启侧边栏.
-sidebar-about-description: "Goals determine what you going to be!"
+sidebar-about-description: "Living without an aim is like sailing without a compass!"
 # "图片"
 sidebar-avatar: /img/Mo.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
