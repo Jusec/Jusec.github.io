@@ -61,3 +61,22 @@ tags:
 
 1. 之前的ViT中，由于 Self-attention 是全局计算的，所以在图像分辨率较大时不太经济。由于 Locality 一直是视觉建模里非常有效的一种 Inductive Bias，所以我们将图片切分为 **无重合的 Windows**，然后在 Local Window 内进行 Self-attention 的计算。为了让 Windows 之间有信息交换，我们在相邻两层使用不同的 Windows 划分 (Shifted Window)。
 2. 图片中的物体大小不一，而 ViT 中使用固定的 Scale 进行建模或许对下游任务例如目标检测而言不是最优的。在这里我们还是 Follow 传统 CNN 构建了一个 **层次化的 Transformer 模型**，从 4x 逐渐降分辨率到 32x，这样也可以在任意框架中无缝替代之前的 CNN 模型。
+3. MSA：FLOPS:
+	$$
+	\Omega(M S A)=4 h w C^{2}+2(h w)^{2} C
+	$$
+	W-MSA & SW-MSA: FLOPS：
+	$$
+	\Omega(W-M S A)=4 h w C^{2}+2 M^{2} h w C=\Omega(S W-M S A)
+	$$
+	==W-MSA目的==：减少很大计算量，尤其是在浅层网络
+
+	缺点:窗口间无法进行信息交互
+
+	
+
+	==SW-MSA==:进行窗口间的信息交互
+
+	
+
+	==Relative Position Bias==(相对位置偏置):对模型性能有明显提升
